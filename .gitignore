@@ -1,4 +1,8 @@
 env/
+exam-front/node_modules/
+exam-front/app/bower_components/
+exam-front/dist/
+exam-front/test/
 *.pyc
 *.pyo
 *.swp
