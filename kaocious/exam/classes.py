@@ -1,21 +1,31 @@
 import datetime
 import os
 
+INTERVIEW_PATH = '/srv/interview/'
+
 class Candicate:
+    def __init__(self, id):
+        self.id = id
     pass
 
 class Paper:
     pass
 
 class WorkSpace:
-    def __init__(self, candicate, paper)
+    def __init__(self, candicate, interview):
         self.candicate = candicate
-        self.paper = paper
+        self.interview = interview
+
+    def create_interview():
+        interview_path = os.path.join(INTERVIEW_PATH,
+            '-'.join(self.candicate.name, self.interview.start_at))
+        os.makedirs(interview_path)
+        
 
 class Interview:
-    def __init__(self, candicate, paper):
-        self.start_at = datetime.datetime.now()
-        self.workspace = WorkSpace(candicate,paper)
+    def __init__(self, candicate):
+        now = datetime.datetime.now()
+        self.start_at = str(now)
 
 class Question:
     pass
