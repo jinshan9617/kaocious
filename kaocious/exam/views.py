@@ -1,8 +1,24 @@
 from django.http import HttpResponse
+import json
 from classes import *
 def home(req):
     from django.shortcuts import redirect
     return redirect('/static/index.html')
+
+
+def login(req):
+    reqdata = req.POST
+    candicate = Candicate(
+        id=reqdata['user_id'], name=reqdata['user_name'])
+    
+    res = HttpResponse('')
+    res.set_cookie('userid', candicate.id)
+    return res
+
+
+def get_questions(req):
+    pass
+
 
 def answer(req, question_id):
     if req.method == "GET":
@@ -26,7 +42,7 @@ def answer(req, question_id):
         workspace = WorkSpace(who)
         workspace.save_answer(new_answer)
 
-        from django.shortcuts import redirect
-        return redirect('/static/index.html')
+        return HttpResponse(
+            'ok', content_type="application/json")
 
-        
+

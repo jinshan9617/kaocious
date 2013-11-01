@@ -33,6 +33,7 @@ require(['jquery', 'bootstrap', 'cookie'], function ($) {
         $.post(
             "/answer/1",
             {
+                'candicate': 0001,
                 'type': "select_question",
                 'options': [1]
             },
