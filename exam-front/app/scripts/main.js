@@ -29,17 +29,47 @@ require(['jquery', 'bootstrap', 'cookie'], function ($) {
             }
         }
     });
-    $('button').click(function(){
-        $.post(
-            "/answer/1",
+
+
+    document.getElementById("login_btn").onclick = function(e){
+        var user_id = document.getElementById('user_id').value;
+        
+        if(!user_id.replace(" ","")){
+            alert('userID can not be empty!');
+            return false;
+        }
+        $.post("/login",
+            {"user_id":user_id},
+            function(data){
+                alert(data);
+            });
+        
+    };
+
+    document.getElementById("start_btn").onclick = function(e){
+        $.get('/questions',
+            function(data){
+                document.getElementById("questions").innerText = JSON.stringify(data);
+            });
+    };
+
+    document.getElementById("answer_btn").onclick = function(e){
+        var option = document.getElementById("option").value;
+        $.post('/answer/q0001',
             {
-                'candicate': 0001,
-                'type': "select_question",
-                'options': [1]
+                "type":"select_question",
+                "options":[option]
             },
             function(data){
                 alert(data);
-            }
-        );
-    });
+            });
+    };
+
+    document.getElementById('submit_paper_btn').onclick = function(e){
+        $.get('/report',
+        function(data){
+            document.getElementById("report").innerText = JSON.stringify(data);
+        });
+    };
+
 });

@@ -17,7 +17,19 @@
     </head>
     <body>
         <div class="container">
-            <input id="answer"></input><button>submit</button>
+            <div col-md-4>
+            <input class="form-control" id="user_id" placeholder="user_id"></input>
+            </div>
+            <div>
+            <button id="login_btn" class="btn btn-primary">sign in</button>
+            </div>
+            <br>
+            <button id="start_btn" class="btn btn-success">start</button>
+            <div id="questions" class="well"></div>
+            <input id="option" placeholder="input select number"/><button id="answer_btn">submit</button>
+            <br>
+            <button id="submit_paper_btn" class="btn btn-danger">complete</button>
+            <div id="report" class="well"></div>
         </div>
 
         <!--[if lt IE 7]>

@@ -7,10 +7,11 @@ from django.conf.urls import patterns, include, url
 urlpatterns = patterns('',
     # Examples:
     url(r'^$', 'exam.views.home', name='home'),
-    url(r'^answer/(\d)+$', 'exam.views.answer'),
+    url(r'^answer/([a-zA-Z\d]+)$', 'exam.views.answer'),
     url(r'^login', 'exam.views.login'),
     url(r'^questions', 'exam.views.get_questions'),
     url(r'^mkques', 'exam.views.mkquestion4test'),
+    url(r'^report', 'exam.views.complete')
     # url(r'^kaocious/', include('kaocious.foo.urls')),
 
     # Uncomment the admin/doc line below to enable admin documentation:

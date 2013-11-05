@@ -13,7 +13,7 @@ def login(req):
     workspace = WorkSpace()
     workspace.set_interview(interview)
     workspace.create_space()
-    res = HttpResponse('')
+    res = HttpResponse('success')
     res.set_cookie('userid', candicate.id)
     return res
 
@@ -68,6 +68,20 @@ def answer(req, question_id):
         return HttpResponse(
             'ok', content_type="application/json")
 
+
+def complete(req):
+    if not req.COOKIES.get('userid'):
+        return HttpResponse('')
+    who = req.COOKIES.get('userid')
+    candicate = Candicate(id=who)
+    interview = Interview(candicate)
+    workspace = WorkSpace()
+    workspace.set_interview(interview)
+    report = workspace.get_report()
+    return HttpResponse(json.dumps(report),
+        content_type="application/json")
+
+
 def mkquestion4test(req):
     options = [
         {'id':1, 'txt':'AAA'},
@@ -76,7 +90,7 @@ def mkquestion4test(req):
         {'id':4, 'txt':'DDD'},
         ]
     question = SelectQuestion(
-        question_id='0001',
+        question_id='q0001',
         description='aaaaaaaaaa?',
         correct_answer=[3],
         options=options

@@ -22,9 +22,9 @@ class WorkSpace:
 
     def create_space(self):
         self.interview_path = os.path.join(INTERVIEW_PATH,
-            self.candicate.id)
-        if os.path.exists(self.interview_path):
-            os.makedirs(interview_path)
+            self.interview.candicate.id)
+        if not os.path.exists(self.interview_path):
+            os.makedirs(self.interview_path)
 
     def create_question(self, question):
         print question.id
@@ -40,7 +40,8 @@ class WorkSpace:
                 paper.append(pickle.load(
                     open(os.path.join(QUESTION_PATH, qfile))))
         #with open(os.path.join(self.interview_path, "paper"), "w") as fp:
-        with open(os.path.join('/home/jinshan/exam/interview/0001', "paper"), "w") as fp:
+        with open(os.path.join(
+            INTERVIEW_PATH, self.interview.candicate.id, "paper"), "w") as fp:
             pickle.dump(paper, fp)
 
         return paper
@@ -48,18 +49,45 @@ class WorkSpace:
     def save_answer(self, answer):
         data = {}
         #filename = os.path.join(self.interview_path, "answer")
-        filename = os.path.join("/home/jinshan/exam/interview/0001", "answer")
+        filename = os.path.join(
+            INTERVIEW_PATH, self.interview.candicate.id, "answer")
         if os.path.exists(filename):
             with open(filename) as fp:
                 data = pickle.load(fp)
 
+        print 'answer', answer.question_id
+
         data[answer.question_id] = answer
+        print data
         with open(filename, 'w') as fp:
             pickle.dump(data, fp)
 
     def get_question(self, question_id):
         question_file = os.path.join(QUESTION_PATH, question_id)
         return pickle.load(open(question_file))
+
+    def get_report(self):
+        answer_file = os.path.join(
+            INTERVIEW_PATH, self.interview.candicate.id, "answer")
+        answers = [];
+        with open(answer_file) as fp:
+            answers = pickle.load(fp)
+        report = []
+        print 'answer : ', type(answers['q0001'])
+        for n in answers:
+            answer = answers[n]
+            if isinstance(answer, SelectAnswer):
+                result = answer.equals(self.get_question(answer.question_id))
+                report.append({
+                    "question_id":answer.question_id,
+                    "resualt":result})
+
+        report_file = os.path.join(
+            INTERVIEW_PATH, self.interview.candicate.id, "report")
+        with open(report_file, 'w') as fp:
+            pickle.dump(report, fp)
+
+        return report
 
 
 class Interview:
