@@ -1,7 +1,7 @@
 require.config({
     paths: {
         jquery: '../bower_components/jquery/jquery',
-        bootstrap: 'vendor/bootstrap',
+        bootstrap: '../bower_components/bootstrap/dist/js/bootstrap',
         cookie: '../bower_components/jquery.cookie/jquery.cookie'
     },
     shim: {
