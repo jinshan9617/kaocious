@@ -1,9 +1,18 @@
 from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+import os
 import json
+import base64
 from classes import *
 def home(req):
     from django.shortcuts import redirect
     return redirect('/static/index.html')
+
+@csrf_exempt
+def upload(req):
+    print req.FILES['file'].read()
+
+    return HttpResponse('success')
 
 
 def login(req):
@@ -44,19 +53,24 @@ def answer(req, question_id):
     elif req.method == "POST":
         if not req.COOKIES.get('userid'):
             return HttpResponse('')
-        reqdata = req.POST
+        reqdata = json.loads(req.POST['data'])
         who = req.COOKIES.get('userid')
         # answer of select quesion
+        print 'data', reqdata
         if reqdata['type'] == 'select_question':
             new_answer = SelectAnswer(
                 question_id=question_id,
-                type=reqdata['type'],
-                selectoptions=reqdata['options[]']
+                type='select_answer',
+                selectoptions=reqdata['options']
             )
 
         # answer of program quesion
         elif reqdata['type'] == 'program_question':
-            new_answer = ProgramAnswer()
+            new_answer = ProgramAnswer(
+                question_id=question_id,
+                type='program_answer',
+                answer_files = req.FILES
+                )
         
         # save answer to workspace
         candicate = Candicate(id=who)

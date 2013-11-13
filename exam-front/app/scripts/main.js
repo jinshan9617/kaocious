@@ -24,7 +24,7 @@ require(['jquery', 'bootstrap', 'cookie'], function ($) {
     $.ajaxSetup({
         crossDomain: false, // obviates need for sameOrigin test
         beforeSend: function(xhr, settings) {
-            if (!csrfSafeMethod(settings.type)) {
+            if (true) {
                 xhr.setRequestHeader("X-CSRFToken", csrftoken);
             }
         }
@@ -56,10 +56,11 @@ require(['jquery', 'bootstrap', 'cookie'], function ($) {
     document.getElementById("answer_btn").onclick = function(e){
         var option = document.getElementById("option").value;
         $.post('/answer/q0001',
-            {
-                "type":"select_question",
-                "options":[option]
-            },
+            //{
+            //    "type":"select_question",
+            //    "options":[1,2,3]
+            //},
+            {'data':'{"type":"select_question","options":[1,2,3]}'},
             function(data){
                 alert(data);
             });
@@ -71,5 +72,40 @@ require(['jquery', 'bootstrap', 'cookie'], function ($) {
             document.getElementById("report").innerText = JSON.stringify(data);
         });
     };
+
+    var fileupload = document.getElementById("file");
+    fileupload.onchange = function(e){
+        var file = e.target.files[0];
+        upload(file);
+    };
+    
+    function upload(file){
+        var reader = new FileReader();
+        var xhr = new XMLHttpRequest();
+        reader.onloadend = function(e){
+        /*
+            $.ajax({
+                type: "POST",
+                url: "/upload",
+                enctype: 'multipart/form-data',
+                data: {"file": file},
+                success: function(data){console.log(data);}
+            });
+         */
+            data = reader.result;
+            var formdata = new FormData();
+            formdata.append('file', file);
+            formdata.append('data', '{"type":"program_question"}');
+            xhr.onreadystatechange = function(){
+                console.log('a');
+            };
+            xhr.open('POST','/answer/q0002');
+            xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));
+            xhr.send(formdata);
+        };
+        reader.readAsDataURL(file);
+        
+    }
+
 
 });

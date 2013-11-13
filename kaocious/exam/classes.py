@@ -1,9 +1,13 @@
 import datetime
 import os
+import shutil
+import tempfile
 import cPickle as pickle
+from subprocess import call
 
 INTERVIEW_PATH = '/home/jinshan/exam/interview/'
 QUESTION_PATH = '/home/jinshan/exam/questions/'
+TESTER_PATH = '/home/jinshan/exam/tester/'
 
 class Candicate:
     def __init__(self, id):
@@ -47,20 +51,39 @@ class WorkSpace:
         return paper
 
     def save_answer(self, answer):
-        data = {}
-        #filename = os.path.join(self.interview_path, "answer")
-        filename = os.path.join(
-            INTERVIEW_PATH, self.interview.candicate.id, "answer")
-        if os.path.exists(filename):
-            with open(filename) as fp:
-                data = pickle.load(fp)
+        answer_path = os.path.join(
+            INTERVIEW_PATH, self.interview.candicate.id,
+            'answer', answer.question_id)
+        if not os.path.exists(answer_path):
+            os.makedirs(answer_path)
+        filename = os.path.join(answer_path, 'answer')
+        history_path = os.path.join(answer_path, 'history')
+        if not os.path.isdir(history_path):
+            os.makedirs(history_path)
+        filelist = os.listdir(answer_path)
+        filelist.remove('history')
+        if len(filelist):
+            print filelist
+            old_file = os.path.join(history_path, str(datetime.datetime.now()))
+            os.makedirs(old_file)
+            for oflie in filelist:
+                shutil.move(os.path.join(answer_path, oflie),
+                    os.path.join(old_file, oflie))
 
-        print 'answer', answer.question_id
+        if answer.type == "program_answer":
+            program_dir = os.path.join(answer_path, 'code')
 
-        data[answer.question_id] = answer
-        print data
-        with open(filename, 'w') as fp:
-            pickle.dump(data, fp)
+            if not os.path.isdir(program_dir):
+                os.makedirs(program_dir)
+            files = answer.answer_files
+            for answer_file in files:
+                file_path = os.path.join(program_dir, files[answer_file].name)
+                with open(file_path, 'w') as code:
+                    code.write(files[answer_file].read())
+            answer.answer_files = './code'
+        
+        with open(filename, "w") as fp:
+            pickle.dump(answer, fp)
 
     def get_question(self, question_id):
         question_file = os.path.join(QUESTION_PATH, question_id)
@@ -69,18 +92,23 @@ class WorkSpace:
     def get_report(self):
         answer_file = os.path.join(
             INTERVIEW_PATH, self.interview.candicate.id, "answer")
-        answers = [];
+        answers = []
         with open(answer_file) as fp:
             answers = pickle.load(fp)
         report = []
-        print 'answer : ', type(answers['q0001'])
         for n in answers:
             answer = answers[n]
             if isinstance(answer, SelectAnswer):
                 result = answer.equals(self.get_question(answer.question_id))
                 report.append({
                     "question_id":answer.question_id,
-                    "resualt":result})
+                    "result":result})
+            elif isinstance(answer, ProgramAnswer):
+                result = answer.equals(
+                    self.get_question(answer.question_id), self.interview)
+                report.append({
+                    "question_id":answer.question_id,
+                    "result":result})
 
         report_file = os.path.join(
             INTERVIEW_PATH, self.interview.candicate.id, "report")
@@ -119,12 +147,33 @@ class SelectAnswer(Answer):
         self.selectoptions = selectoptions
 
     def equals(self, question):
+
         return sorted(self.selectoptions)==sorted(question.correct_answer)
 
 class ProgramAnswer(Answer):
     
-    def __init__(self, question_id, type, answer_file):
-        pass
+    def __init__(self, question_id, type, answer_files):
+        self.question_id = question_id
+        self.type = type
+        self.answer_files = answer_files
 
-    def equals(self, answer):
-        pass
+    def equals(self, question, interview):
+        tester_path = os.path.join(TESTER_PATH, self.question_id)
+        code_path = os.path.join(INTERVIEW_PATH,
+            interview.candicate.id, self.question_id, 'code')
+        tmp4test_path = tempfile.mkdtemp(prefix="examtest-")
+        code_files = os.listdir(code_path)
+        
+        for code in code_files:
+            shutil.copy(os.path.join(
+                code_path, code), os.path.join(tmp4test_path, code))
+        
+        test_files = os.listdir(tester_path)
+
+        for tester in test_files:
+            shutil.copy(os.path.join(
+                tester_path, tester), os.path.join(tmp4test_path, tester))
+
+        cmd = " ".join(["cd", tmp4test_path, "&&", "nosetests"])
+        result = call(cmd)
+        return result

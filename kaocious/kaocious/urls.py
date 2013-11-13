@@ -8,6 +8,7 @@ urlpatterns = patterns('',
     # Examples:
     url(r'^$', 'exam.views.home', name='home'),
     url(r'^answer/([a-zA-Z\d]+)$', 'exam.views.answer'),
+    url(r'^upload$', 'exam.views.upload'),
     url(r'^login', 'exam.views.login'),
     url(r'^questions', 'exam.views.get_questions'),
     url(r'^mkques', 'exam.views.mkquestion4test'),
