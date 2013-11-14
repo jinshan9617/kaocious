@@ -47,6 +47,32 @@ def get_questions(req):
     return HttpResponse(json.dumps(resdata), content_type="application/json")
 
 
+def question(req, question_id):
+    if not req.COOKIES.get('userid'):
+        return HttpResponse('')
+    reqdata = json.loads(req.POST['data'])
+    who = req.COOKIES.get('userid')
+    if reqdata['type'] == 'select_qustion':
+        new_question = SelectQuestion(
+            question_id=question_id,
+            description=reqdata['description'],
+            options=reqdata['options']
+            correct_answer=reqdata['correct_answer']
+        )
+    elif reqdata['type'] == 'program_question':
+        new_question = ProgramQuestion(
+            question_id=question_id,
+            description=reqdata['description'],
+            testers=req.FILES
+        )
+    
+    candicate = Candicate(id=who)
+    interview = Interview(candicate)
+    workspace = WorkSpace()
+    workspace.set_interview(interview)
+    workspace.create_question(new_question)
+
+
 def answer(req, question_id):
     if req.method == "GET":
         pass

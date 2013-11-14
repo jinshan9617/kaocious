@@ -31,10 +31,23 @@ class WorkSpace:
             os.makedirs(self.interview_path)
 
     def create_question(self, question):
-        print question.id
-        question_file = os.path.join(QUESTION_PATH, question.id)
-        print question_file
-        with open(question_file, "w") as fp:
+        
+        question_path = os.path.join(QUESTION_PATH, question.id)
+        if not os.path.isdir(question_path):
+            os.makedirs(question_path)
+        
+        if isinstance(question, ProgramQuestion):
+            testers = question.testers
+            tester_path = os.path.join(question_path, "testers")
+            if not os.isdir(tester_path):
+                os.makedirs(tester_path)
+            for tester in testers:
+                code_path = os.path.join(tester_path, testers[tester].name)
+                with open(code_path, 'w') as code:
+                    code.write(testers[tester].read())
+                    
+        question.testers = './testers'
+        with open(os.path.join(question_path, 'question'), "w") as fp:
             pickle.dump(question, fp)
 
     def create_paper(self):
@@ -90,22 +103,31 @@ class WorkSpace:
         return pickle.load(open(question_file))
 
     def get_report(self):
-        answer_file = os.path.join(
+        answer_path = os.path.join(
             INTERVIEW_PATH, self.interview.candicate.id, "answer")
-        answers = []
-        with open(answer_file) as fp:
-            answers = pickle.load(fp)
         report = []
-        for n in answers:
-            answer = answers[n]
+
+        paperfile = os.path.join(
+            INTERVIEW_PATH, self.interview.candicate.id, "paper")
+        with open(paperfile) as fp:
+            paper = pickle.load(fp)
+
+        for question in paper:
+            answerfile = os.path.join(answer_path, question.id, 'answer')
+            if not os.path.exists(answerfile):
+                report.append({
+                    "question_id":question.id,
+                    "result":"answer is empty!"})
+                continue
+            with open(answerfile) as fp:
+                answer = pickle.load(fp)
             if isinstance(answer, SelectAnswer):
-                result = answer.equals(self.get_question(answer.question_id))
+                result = answer.equals(question)
                 report.append({
                     "question_id":answer.question_id,
                     "result":result})
             elif isinstance(answer, ProgramAnswer):
-                result = answer.equals(
-                    self.get_question(answer.question_id), self.interview)
+                result = answer.equals(question, self.interview)
                 report.append({
                     "question_id":answer.question_id,
                     "result":result})
@@ -133,6 +155,13 @@ class SelectQuestion:
         self.options = options
 
 
+class ProgramQuestion:
+    
+    def __init__(self, qustion_id, description, testers):
+        self.id = question_id
+        self.description = description
+        self.testers=testers
+
 class Answer:
     def __init__(self, question_id):
         self.question_id = question_id
@@ -158,7 +187,7 @@ class ProgramAnswer(Answer):
         self.answer_files = answer_files
 
     def equals(self, question, interview):
-        tester_path = os.path.join(TESTER_PATH, self.question_id)
+        tester_path = os.path.join(QUESTION_PATH, self.question_id, 'testers')
         code_path = os.path.join(INTERVIEW_PATH,
             interview.candicate.id, self.question_id, 'code')
         tmp4test_path = tempfile.mkdtemp(prefix="examtest-")
