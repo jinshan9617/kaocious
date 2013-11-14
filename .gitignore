@@ -1,4 +1,5 @@
 env/
+kaocious/static
 exam-front/node_modules/
 exam-front/app/bower_components/
 exam-front/dist/
