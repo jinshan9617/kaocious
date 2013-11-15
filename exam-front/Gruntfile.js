@@ -56,7 +56,7 @@ module.exports = function (grunt) {
             options: {
                 port: 9000,
                 // change this to '0.0.0.0' to access the server from outside
-                hostname: 'localhost'
+                hostname: '0.0.0.0'
             },
             livereload: {
                 options: {
@@ -185,8 +185,23 @@ module.exports = function (grunt) {
                     // http://requirejs.org/docs/errors.html#sourcemapcomments
                     preserveLicenseComments: false,
                     useStrict: true,
-                    wrap: true
+                    wrap: true,
+                    name: 'main',
+                    out: 'dist/scripts/main.js',
+                    mainConfigFile:'app/scripts/main.js'
                     //uglify2: {} // https://github.com/mishoo/UglifyJS2
+                }
+            },
+            dist2:{
+                options: {
+                    baseUrl: yeomanConfig.app + '/scripts',
+                    optimize: 'none',
+                    preserveLicenseComments: false,
+                    useStrict: true,
+                    wrap: true,
+                    name: 'admin',
+                    out: 'dist/scripts/admin.js',
+                    mainConfigFile: 'app/scripts/admin.js'
                 }
             }
         },
@@ -206,7 +221,7 @@ module.exports = function (grunt) {
             options: {
                 dest: '<%= yeoman.dist %>'
             },
-            html: '<%= yeoman.app %>/index.html'
+            html: ['<%= yeoman.app %>/index.html', '<%= yeoman.app %>/admin.html']
         },
         usemin: {
             options: {
@@ -312,7 +327,7 @@ module.exports = function (grunt) {
                 exclude: ['modernizr']
             },
             all: {
-                rjsConfig: '<%= yeoman.app %>/scripts/main.js'
+                rjsConfig: ['<%= yeoman.app %>/scripts/main.js', '<%= yeoman.app %>/scripts/admin.js']
             }
         }
     });

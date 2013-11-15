@@ -6,7 +6,8 @@
     "modernizr": "~2.6.2",
     "jquery": "~1.9.1",
     "jquery.cookie": "~1.4.0",
-    "bootstrap": "~3.0.1"
+    "bootstrap": "~3.0.1",
+    "underscore": "~1.5.2"
   },
   "devDependencies": {}
 }
