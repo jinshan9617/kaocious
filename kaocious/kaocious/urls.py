@@ -13,7 +13,7 @@ urlpatterns = patterns('',
     url(r'^questions', 'exam.views.get_questions'),
     url(r'^mkques', 'exam.views.mkquestion4test'),
     url(r'^report', 'exam.views.complete'),
-    url(r'question/([a-zA-Z\d]+)$', 'wxam.views.question')
+    url(r'question/([a-zA-Z\d]+)$', 'exam.views.question')
     # url(r'^kaocious/', include('kaocious.foo.urls')),
 
     # Uncomment the admin/doc line below to enable admin documentation:

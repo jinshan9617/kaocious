@@ -48,15 +48,17 @@ def get_questions(req):
 
 
 def question(req, question_id):
-    if not req.COOKIES.get('userid'):
-        return HttpResponse('')
+    print question_id
+    #if not req.COOKIES.get('userid'):
+    #    return HttpResponse('')
     reqdata = json.loads(req.POST['data'])
     who = req.COOKIES.get('userid')
+    print reqdata
     if reqdata['type'] == 'select_qustion':
         new_question = SelectQuestion(
             question_id=question_id,
             description=reqdata['description'],
-            options=reqdata['options']
+            options=reqdata['options'],
             correct_answer=reqdata['correct_answer']
         )
     elif reqdata['type'] == 'program_question':
@@ -71,6 +73,7 @@ def question(req, question_id):
     workspace = WorkSpace()
     workspace.set_interview(interview)
     workspace.create_question(new_question)
+    return HttpResponse('success')
 
 
 def answer(req, question_id):

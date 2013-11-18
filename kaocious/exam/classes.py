@@ -46,7 +46,8 @@ class WorkSpace:
                 with open(code_path, 'w') as code:
                     code.write(testers[tester].read())
                     
-        question.testers = './testers'
+            question.testers = './testers'
+        print question_path
         with open(os.path.join(question_path, 'question'), "w") as fp:
             pickle.dump(question, fp)
 

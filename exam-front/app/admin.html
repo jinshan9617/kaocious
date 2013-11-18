@@ -29,7 +29,7 @@
                 <div class="col-lg-3">
                     <div data-spy="affix" data-offset-top="200">
                         <div class="list-group">
-                        <a id="new_question" href="#" class="list-group-item">new question</a>
+                        <a id="new_question_link" href="#" class="list-group-item">new question</a>
                         <a href="#" class="list-group-item">click me</a>
                         <a href="#" class="list-group-item">click me</a>
                         <a href="#" class="list-group-item">click me</a>
@@ -39,18 +39,62 @@
                 </div>
                 <div class="col-lg-9">
                     <div id="main">
-                        <div id="new_question" class="well">
-                            <div class="title">new question</div>
-                            <div class="btn-group" data-toggle="buttons">
-                                <label class="btn btn-primary"><input type="radio" name="questionType" id="selq_btn">choice question</label>
-                                <label class="btn btn-primary"><input type="radio" name="questionType" id="proq_btn">program question</label>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
         </div>
-
+        
+        <!-- templates -->
+        <script id="option" type="javascript/template">
+            <div class="input-group option">
+                <span class="input-group-addon" title="correct tag"><input type="checkbox" class="correct"></span>
+                <span class="input-group-addon option_id"><%= optionId %></span>
+                <input type="text" class="form-control option_txt" placeholder="input content of the option">
+            </div>
+        </script>
+        <script id="new_question" type="javascript/template">
+            <div class="well">
+                <div class="title">new question</div>
+                <div class="btn-group col-lg-offset-4" data-toggle="buttons">
+                    <label class="btn btn-primary"><input type="radio" name="questionType" id="selq_btn">choice question</label>
+                    <label class="btn btn-primary"><input type="radio" name="questionType" id="proq_btn">program question</label>
+                </div>
+                <div id="question_content"></div>
+            </div>
+        </script>
+        <script id="choice_question" type="javascript/template">
+            <div class="question_form">
+                <div class="form-group">
+                <input id="question_id" class="form-control" placeholder="input question id"/>
+                </div>
+                <div class="form-group">
+                <textarea id="description" class="form-control" row=3 placeholder="input description of the question"></textarea>
+                </div>
+                <p>options:<button id="add_option_btn" class="btn btn-xs btn-success col-lg-offset-10">add an option</button></p>
+                <div id="options" class="form-group">
+                </div>
+                <div class="form-group">
+                    <button id="submit_btn" class="btn btn-success">submit</button>
+                </div>
+            </div>
+        </script>
+        <script id="program_question" type="javascript/template">
+            <div class="question_form">
+                <div class="form-group">
+                <input id="question_id" class="form-control" placeholder="input question id"/>
+                </div>
+                <div class="form-group">
+                <textarea id="description" class="form-control" row=3 placeholder="input description of the question"></textarea>
+                </div>
+                <p>upload tester file:</p>
+                <div class="form-group">
+                <input type="file"/>
+                </div>
+                <div class="form-group">
+                    <button id="submit_btn" class="btn btn-success">submit</button>
+                </div>
+            </div>
+        </script>
 
         <!--[if lt IE 7]>
             <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
