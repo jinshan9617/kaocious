@@ -16,23 +16,51 @@
         <!-- endbuild -->
     </head>
     <body>
-        <div class="container">
-            <div col-md-4>
-            <input class="form-control" id="user_id" placeholder="user_id"></input>
+        <div id="paper" class="container container-init">
+            <div id="questions" class="well">
+
             </div>
-            <div>
-            <button id="login_btn" class="btn btn-primary">sign in</button>
+            <div class="form-group">
+                <button id="prequestion" class="btn btn-primary">previous question</button>
+                <button id="nextquestion" class="btn btn-primary">next question</button>
+                <button id="complete_btn" class="btn btn-success btn-right">finish and hand in</button>
             </div>
-            <br>
-            <button id="start_btn" class="btn btn-success">start</button>
-            <div id="questions" class="well"></div>
-            <input id="option" placeholder="input select number"/><button id="answer_btn">submit</button>
-            <br>
-            <input id="file" type="file"/>
-            <button id="submit_paper_btn" class="btn btn-danger">complete</button>
-            <div id="report" class="well"></div>
+            <div class="form-group">
+                <p>paper status:</p>
+                <div id="index" class="btn-group">
+                </div>
+            </div>
         </div>
 
+        <div id="loginModal" class="modal fade" aria-hidden="true"  tabindex="-1">
+            <div id="login-dialog" class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Sign In</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <input id="user_id" class="form-control" placeholder="input your user ID"/>
+                        </div>
+                        <div class="form-group">
+                            <button id="login_btn" class="btn btn-primary">START</button><span id="warning" class="col-md-offset-1"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- template -->
+        <script id="sel_question_template" type="javascript/template">
+            <div id="question_<%=id%>" class="question-area" data-qid=<%=id%> data-type="sq">
+                <h3><span class="label label-primary"><%=order%></span>&nbsp;<%=description%></h3>
+                <% _.each(options, function(option){%>
+                    <div class="checkbox">
+                        <label><input type="checkbox" class="options" data-id=<%=option.id%> name="question_<%=id%>"/><%=option.txt%><label>
+                    </div>    
+                <%}); %>
+            </div>
+        </script>
 
         <!--[if lt IE 7]>
             <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>

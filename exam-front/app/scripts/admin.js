@@ -40,6 +40,12 @@ require(['underscore', 'jquery', 'bootstrap', 'cookie'], function (_, $) {
         renderNewQuestion();
     };
 
+    document.getElementById("logout_link").onclick = function(e){
+        $.post('/logout',{},function(data){
+            window.location.href = 'index.html'
+        });
+    };
+
     function renderNewQuestion(){
         var newQuestionTemplate = document.getElementById("new_question").innerHTML;
         var template = _.template(newQuestionTemplate);
@@ -53,6 +59,12 @@ require(['underscore', 'jquery', 'bootstrap', 'cookie'], function (_, $) {
             renderChoiceQuestion();
         };
 
+        proQuestionBtn.onchange = function(e){
+            if(this.checked !== true){
+                return false;
+            }
+            renderProgramQuestion();
+        };
     }
 
     function renderChoiceQuestion(){
@@ -94,6 +106,37 @@ require(['underscore', 'jquery', 'bootstrap', 'cookie'], function (_, $) {
                 }
             );
         };
+    }
+
+    function renderProgramQuestion(){
+        var newProgramQuestionTemplate = document.getElementById("program_question").innerHTML;
+        var template = _.template(newProgramQuestionTemplate);
+        document.getElementById('question_content').innerHTML = template({});
+        document.getElementById('submit_btn').onclick = upload;
+        function upload(){
+            var file = document.getElementById('tester_file').files[0];
+            var xhr = new XMLHttpRequest();
+            var reader = new FileReader();
+            reader.onload = function(e){
+                data = reader.result;
+                var formdata = new FormData();
+                var senddata = {
+                    type: "program_question",
+                    description: document.getElementById("description").value
+                };
+                formdata.append('file', file);
+                formdata.append('data', JSON.stringify(senddata));
+                xhr.onreadystatechange = function(){
+                    if(xhr.readyState==4 && xhr.status==200){
+                        console.log(xhr.responseText);
+                    }
+                };
+                xhr.open('POST', '/question/' + document.getElementById('question_id').value);
+                xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));
+                xhr.send(formdata);
+            };
+            reader.readAsDataURL(file);
+        }
     }
 
     function renderOption(){

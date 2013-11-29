@@ -17,3 +17,23 @@ body {
 .question_form {
     margin: 20px;
 }
+#login-dialog{
+    position: fixed;
+    height: 256px;
+    top:50%;
+    margin-top:-140px;
+    left:50%;
+    margin-left:-300px;
+}
+#warning{
+    color:chocolate;
+}
+.btn-right {
+    float: right;
+}
+.container-init {
+    display: none;
+}
+.question-area {
+    display:none;
+}

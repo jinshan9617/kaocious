@@ -39,7 +39,7 @@ class WorkSpace:
         if isinstance(question, ProgramQuestion):
             testers = question.testers
             tester_path = os.path.join(question_path, "testers")
-            if not os.isdir(tester_path):
+            if not os.path.isdir(tester_path):
                 os.makedirs(tester_path)
             for tester in testers:
                 code_path = os.path.join(tester_path, testers[tester].name)
@@ -53,10 +53,10 @@ class WorkSpace:
 
     def create_paper(self):
         paper = []
-        for _, _, question_files in os.walk(QUESTION_PATH):
-            for qfile in question_files:
-                paper.append(pickle.load(
-                    open(os.path.join(QUESTION_PATH, qfile))))
+        questions = os.listdir(QUESTION_PATH)
+        for qfile in questions:
+            paper.append(pickle.load(
+                open(os.path.join(QUESTION_PATH, qfile, 'question'))))
         #with open(os.path.join(self.interview_path, "paper"), "w") as fp:
         with open(os.path.join(
             INTERVIEW_PATH, self.interview.candicate.id, "paper"), "w") as fp:
@@ -100,7 +100,7 @@ class WorkSpace:
             pickle.dump(answer, fp)
 
     def get_question(self, question_id):
-        question_file = os.path.join(QUESTION_PATH, question_id)
+        question_file = os.path.join(QUESTION_PATH, question_id, 'question')
         return pickle.load(open(question_file))
 
     def get_report(self):
@@ -151,6 +151,7 @@ class SelectQuestion:
     
     def __init__(self, question_id, description, options, correct_answer):
         self.id = question_id
+        self.type = "select_question"
         self.description = description
         self.correct_answer = correct_answer
         self.options = options
@@ -158,8 +159,9 @@ class SelectQuestion:
 
 class ProgramQuestion:
     
-    def __init__(self, qustion_id, description, testers):
+    def __init__(self, question_id, description, testers):
         self.id = question_id
+        self.type = "program_question"
         self.description = description
         self.testers=testers
 

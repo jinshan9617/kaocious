@@ -1,20 +1,27 @@
 from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import redirect
 import os
 import json
 import base64
 from classes import *
+
 def home(req):
-    from django.shortcuts import redirect
     return redirect('/static/index.html')
 
-@csrf_exempt
 def upload(req):
     print req.FILES['file'].read()
 
     return HttpResponse('success')
 
+@csrf_exempt
+def logout(req):
+    res = HttpResponse('success')
+    res.delete_cookie('user_id')
+    return res
 
+@csrf_exempt
 def login(req):
     reqdata = req.POST
     candicate = Candicate(id=reqdata['user_id'])
@@ -40,13 +47,14 @@ def get_questions(req):
         question_dict = {}
         question_dict['id'] = question.id
         question_dict['description'] = question.description
-        print question.options
+        question_dict['type'] = question.type
         if isinstance(question, SelectQuestion):
             question_dict['options'] = question.options
         resdata.append(question_dict)
     return HttpResponse(json.dumps(resdata), content_type="application/json")
 
 
+@csrf_exempt
 def question(req, question_id):
     print question_id
     #if not req.COOKIES.get('userid'):
@@ -76,6 +84,7 @@ def question(req, question_id):
     return HttpResponse('success')
 
 
+@csrf_exempt
 def answer(req, question_id):
     if req.method == "GET":
         pass
