@@ -24,12 +24,17 @@ def logout(req):
 @csrf_exempt
 def login(req):
     reqdata = req.POST
+    print reqdata
     candicate = Candicate(id=reqdata['user_id'])
     interview = Interview(candicate=candicate)
     workspace = WorkSpace()
     workspace.set_interview(interview)
     workspace.create_space()
     res = HttpResponse('success')
+    #res["Access-Control-Allow-Origin"] = "*"
+    #res["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"  
+    #res["Access-Control-Max-Age"] = "1000"  
+    #res["Access-Control-Allow-Headers"] = "*"
     res.set_cookie('userid', candicate.id)
     return res
 
@@ -37,7 +42,8 @@ def login(req):
 def get_questions(req):
     if not req.COOKIES.get('userid'):
         return HttpResponse('')
-    candicate = Candicate(id=req.COOKIES.get('userid'))
+    who = req.COOKIES.get('userid')
+    candicate = Candicate(id=who)
     interview = Interview(candicate=candicate)
     workspace = WorkSpace()
     workspace.set_interview(interview)
@@ -57,8 +63,8 @@ def get_questions(req):
 @csrf_exempt
 def question(req, question_id):
     print question_id
-    #if not req.COOKIES.get('userid'):
-    #    return HttpResponse('')
+    if not req.COOKIES.get('userid'):
+        return HttpResponse('')
     reqdata = json.loads(req.POST['data'])
     who = req.COOKIES.get('userid')
     print reqdata

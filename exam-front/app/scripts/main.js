@@ -20,6 +20,7 @@ require.config({
 });
 
 require(['underscore', 'jquery', 'bootstrap', 'cookie'], function (_, $) {
+    var base_url = 'http://jinshan-pc:8765';
     var currentQuestion;
     var csrftoken = $.cookie('csrftoken');
     function csrfSafeMethod(method) {
@@ -49,7 +50,8 @@ require(['underscore', 'jquery', 'bootstrap', 'cookie'], function (_, $) {
             document.getElementById("warning").innerHTML = "user ID can not be empty!";
             return false;
         }
-        $.post("/login",
+        console.log(user_id)
+        $.post(base_url + "/login",
             {"user_id":user_id},
             function(data){
                 $("#loginModal").modal("hide");
@@ -58,7 +60,7 @@ require(['underscore', 'jquery', 'bootstrap', 'cookie'], function (_, $) {
     };
     
     function renderPaper(){
-        $.get('/questions',
+        $.get(base_url + '/questions',
             function(data){
                 var sortData = _.sortBy(data, function(obj){return obj.id;});
                 _.each(sortData, function(question, i){
@@ -122,16 +124,16 @@ require(['underscore', 'jquery', 'bootstrap', 'cookie'], function (_, $) {
         var len = questions.length;
         function countplus(){
             count++;
-            console.log(count);
-            return count;
+            if(count === len){
+                getReport();
+            }
         }
         _.each(questions, function(questionArea, i){
             submitAnswer(questionArea, countplus, len);
         });
     };
 
-    function submitAnswer(questionArea, countplus, len){
-        console.log(questionArea);
+    function submitAnswer(questionArea, countplus){
         var type = questionArea.getAttribute("data-type"),
             id = questionArea.getAttribute("data-qid"),
             postData;
@@ -149,18 +151,28 @@ require(['underscore', 'jquery', 'bootstrap', 'cookie'], function (_, $) {
             };
             $.ajax({
                 type: 'POST',
-                url: '/answer/' + id,
+                url: base_url + '/answer/' + id,
                 data: {"data": JSON.stringify(postData)},
-                success: function(res){
-                    console.log(res);
+                complete: function(){
+                    countplus();
                 }
             });
             //$.post('/answer/' + id, {"data": JSON.stringify(postData)}).success(function(data){console.log(data)});
+        }else if(type === "pq"){
+            upload(id);
         }
     }
 
     function getReport(){
-        alert(1);
+        $.get('/report',function(data){
+            renderReport(data);
+        });
+    }
+
+    function renderReport(data){
+        var reporttemplate = document.getElementById("report").innerHTML;
+        var template = _.template(reporttemplate);
+
     }
 /*
     var fileupload = document.getElementById("file");

@@ -179,8 +179,9 @@ class SelectAnswer(Answer):
         self.selectoptions = selectoptions
 
     def equals(self, question):
+        correct_answer = [ int(answer) for answer in question.correct_answer ]
 
-        return sorted(self.selectoptions)==sorted(question.correct_answer)
+        return sorted(self.selectoptions)==sorted(correct_answer)
 
 class ProgramAnswer(Answer):
     
